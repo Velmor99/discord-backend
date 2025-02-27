@@ -12,7 +12,19 @@ const PORT = process.env.API_PORT;
 
 const app = express()
 app.use(express.json())
-app.use(cors())
+const allowedOrigins = ["http://localhost:3000"]
+app.use(
+    cors({
+        origin: (origin, callback) => {
+            if (!origin || allowedOrigins.includes(origin)) {
+                callback(null, true);
+            } else {
+                callback(new Error("Not allowed by CORS"));
+            }
+        },
+        credentials: true, // Allow cookies & authentication headers
+    })
+)
 
 app.use('/api/auth', authRoutes)
 app.use('/api/friend-invitation', friendInvitationRoutes);
@@ -24,7 +36,7 @@ socketServer.registerSocketServer(server)
 const connection = async () => {
     try {
         const connected = await mongoose.connect(process.env.MONGODB_URL)
-        if(connected) {
+        if (connected) {
             console.log("Database connected")
         }
         await server.listen(PORT, () => {
