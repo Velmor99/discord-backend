@@ -27,6 +27,7 @@ const postLogin = async (req, res) => {
                     mail: user.mail,
                     token: token,
                     username: user.username,
+                    _id: user._id
                 }
             })
         }
@@ -34,6 +35,7 @@ const postLogin = async (req, res) => {
         return res.status(404).send("Invalid credentials. Please try again")
 
     } catch (error) {
+        console.log(error)
         return res.status(500).send('Error occured. Please try again')
     }
 }

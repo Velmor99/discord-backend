@@ -1,9 +1,12 @@
-//сдесь наодится основная логика работы сокет сервера, обработчики событий, соединение и т д
+//здесь наодится основная логика работы сокет сервера, обработчики событий, соединение и т д
 const authSocket = require('./middleware/authSocket')
 const newConnectionHandler = require('./socketHandlers/newConnectionHandler')
 const disconnectHandler = require('./socketHandlers/disconnectHandler')
+const directMessageHandler = require("./socketHandlers/directMessageHandler")
+const directChatHistoryHandler = require('./socketHandlers/directChatHistoryHandler')
 
 const serverStore = require('./serverStore')
+
 
 const registerSocketServer = (server) => {
     const io = require('socket.io')(server, {
@@ -13,7 +16,7 @@ const registerSocketServer = (server) => {
         }
     })
 
-    //сдесь очень интересно, так как эта функция сетит наш io инстанс для дальнейшего переипользования в разных частях приложения
+    //здесь очень интересно, так как эта функция сетит наш io инстанс для дальнейшего переипользования в разных частях приложения
     //то есть мы можем писать io хендлеры не только в этом файле
     serverStore.setSocketServerInstance(io);
 
@@ -29,6 +32,14 @@ const registerSocketServer = (server) => {
     io.on('connection', (socket) => {
         newConnectionHandler(socket, io);
         emitOnlineUsers()
+
+        socket.on('direct-message', (data) => {
+            directMessageHandler(socket, data)
+        })
+
+        socket.on('direct-chat-history', (data) => {
+            directChatHistoryHandler(socket, data)
+        })
 
         socket.on('disconnect', () => {
             disconnectHandler(socket)
