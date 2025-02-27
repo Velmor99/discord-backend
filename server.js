@@ -12,7 +12,7 @@ const PORT = process.env.API_PORT;
 
 const app = express()
 app.use(express.json())
-const allowedOrigins = ["http://localhost:3000"]
+const allowedOrigins = ["http://localhost:3000/", "https://velmor99.github.io/discord-frontend/"]
 app.use(
     cors({
         origin: (origin, callback) => {
