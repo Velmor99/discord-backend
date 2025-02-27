@@ -7,7 +7,7 @@ const postRegister = async (req, res) => {
         const {username, mail, password} = req.body;
 
         // check if user exists
-        const userExists = await User.exists({mail: mail, username: username});
+        const userExists = await User.exists({mail: mail, username: username});``
 
         if(userExists) {
             return res.status(409).send("E-mail is already in use")
@@ -22,6 +22,7 @@ const postRegister = async (req, res) => {
             mail: mail,
             password: encryptedPassword,
         })
+        console.log('user', user)
 
         // create JWT token
         const token = jwt.sign(
@@ -40,9 +41,11 @@ const postRegister = async (req, res) => {
                 mail: user.mail,
                 token: token,
                 username: user.username,
+                _id: user._id
             }
         })
     } catch (error) {
+        console.log(error)
         return res.status(500).send('Error occured. Please try again')
     }
 }
